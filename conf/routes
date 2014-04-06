@@ -1,0 +1,26 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           				controllers.Application.index
+GET		/users										controllers.Application.users
+GET		/users/:id 									controllers.Application.userById(id: Int)
+GET		/users/search/:name/:limit					controllers.Application.userByName(name: String, limit: Int)
+
+
+GET		/movies										controllers.Application.movies
+GET		/movies/:id 								controllers.Application.movieById(id: Int)
+GET     /movies/search/title/:title/:limit			controllers.Application.movieByTitle(title:String, limit: Int)
+GET     /movies/search/actors/:actors/:limit		controllers.Application.movieByActor(actors: String, limit: Int)
+GET		/movies/search/genre/:genre/:limit			controllers.Application.movieByGenre(genre: String, limit: Int)
+
+POST	/rates										controllers.Application.rates
+GET		/rates/:userId 								controllers.Application.ratesByUser(userId: Int)
+
+GET		/users/share/:userid1/:userid2 				controllers.Application.shareRates(userid1: Int, userid2: Int)
+GET		/users/distance/:userid1/:userid2			controllers.Application.distance(userid1: Int, userid2: Int)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

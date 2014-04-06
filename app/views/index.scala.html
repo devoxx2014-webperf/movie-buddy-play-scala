@@ -1,0 +1,21 @@
+@(message: String)
+
+@main("Movie Buddy") {
+
+  <div class="container">
+    <h1>Movie Buddy</h1>
+  </div>
+  <div class="container">
+    <div class="row">
+      <ApplicationTab></ApplicationTab>
+    </div>
+  </div>
+
+  <script src="@routes.Assets.at("javascripts/vendors/JSXTransformer.js")"></script>
+  <script src="@routes.Assets.at("javascripts/vendors/react.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/vendors/bootstrap/dist/js/bootstrap.min.js")"></script>
+  <script src="@routes.Assets.at("javascripts/vendors/underscore.js")"></script>
+  <script src="@routes.Assets.at("javascripts/vendors/backbone.js")"></script>
+
+  <script src="@routes.Assets.at("javascripts/all.scripts.js")"></script>
+}
