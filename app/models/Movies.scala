@@ -1,5 +1,6 @@
 package models
 
+import play.api._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.collection.mutable.{Map,SynchronizedMap, HashMap}
@@ -53,7 +54,8 @@ object Reader {
 
 	def apply[A](filePath:String)(implicit reader:Reads[A]) = {
 
-		val usersSource = Source.fromFile(filePath).getLines().mkString
+		import play.api.Play.current
+		val usersSource = Source.fromInputStream(Play.resourceAsStream(filePath).get).getLines().mkString
   
     	val jsonUsers = Json.parse(usersSource)
     	val users = Json.fromJson[Seq[A]](jsonUsers).get
@@ -66,8 +68,8 @@ object Reader {
 object Repository {
 	import models.JsonReader._
 
-	val users = Reader[User]("conf/users.json").get()
-	val movies = Reader[Movie]("conf/movies.json").get()
+	val users = Reader[User]("users.json").get()
+	val movies = Reader[Movie]("movies.json").get()
 
 	var rates = Set[Rate]()
 		
