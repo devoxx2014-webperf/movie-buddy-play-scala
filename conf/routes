@@ -5,6 +5,7 @@
 # Home page
 GET     /                           				controllers.Application.index
 GET     /search                        				controllers.Application.search
+GET     /images/:url                        			controllers.Application.getImage(url:String)
 
 GET		/users										controllers.Application.users
 GET		/users/:id 									controllers.Application.userById(id: Int)

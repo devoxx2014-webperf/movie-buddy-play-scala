@@ -128,7 +128,7 @@
 				$(".button").hide();
 				// get our text
 	    		var searchText = $("#search").val();
-		       $.get("/movies/search/title/" + encodeURI(searchText) + "/10", function(data) {
+		       $.get("/movies/search/title/" + encodeURIComponent(searchText) + "/10", function(data) {
 		       		// Create the figure img
               var s = (($(data).length / 2) | 0);
             	var start = -(s  * gap) ;
@@ -136,11 +136,11 @@
 		      	  current = (($(data).length/2) | 0);
 		       		$(data).each(function(d) {
 		       			if (start < 0) {
-		      	  			$("#coverflow").append('<figure cp="' + start + '" a="60" onclick="moveTo(this)" style="-webkit-transform: translateX(' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+		      	  			$("#coverflow").append('<figure cp="' + start + '" a="60" onclick="moveTo(this)" style="-webkit-transform: translateX(' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png': "/images/" + encodeURIComponent(this.Poster)) + '"></figure>');
 			      	  	} else if (start == 0) {
-			      	  		$("#coverflow").append('<figure cp="' + start + '" a="0" onclick="moveTo(this)" style="-webkit-transform: translateX(0px) rotateY(0deg)  translateZ(200px)"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+			      	  		$("#coverflow").append('<figure cp="' + start + '" a="0" onclick="moveTo(this)" style="-webkit-transform: translateX(0px) rotateY(0deg)  translateZ(200px)"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png': "/images/" + encodeURIComponent(this.Poster)) + '"></figure>');
 			      	  	} else {
-			      	  		$("#coverflow").append('<figure cp="' + start + '" a="-60" onclick="moveTo(this)" style="-webkit-transform: translateX(' + start + 'px) rotateY(-60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+			      	  		$("#coverflow").append('<figure cp="' + start + '" a="-60" onclick="moveTo(this)" style="-webkit-transform: translateX(' + start + 'px) rotateY(-60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png': "/images/" + encodeURIComponent(this.Poster)) + '"></figure>');
 			      	  	}
 		       			start = start + gap;
 		       		});
