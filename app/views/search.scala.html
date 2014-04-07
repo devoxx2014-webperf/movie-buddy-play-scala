@@ -116,7 +116,7 @@
       var newPos = 0;
       var currAngle = 0;
       var newAngle = 0;
-      var gap = 50;
+      var gap = 100;
       var clickedIndex = 0;      
       var diff = 0;
    $(document).ready(function() {
@@ -128,43 +128,28 @@
 				$(".button").hide();
 				// get our text
 	    		var searchText = $("#search").val();
-		       $.get("/movies/search/title/" + encodeURI(searchText) + "/20", function(data) {
+		       $.get("/movies/search/title/" + encodeURI(searchText) + "/10", function(data) {
 		       		// Create the figure img
-		       		var start = -($(data).length * 50) / 2;
-		      	  	max = $(data).length;
-		      	  	current = $(data).length/2;
+              var s = (($(data).length / 2) | 0);
+            	var start = -(s  * gap) ;
+		      	  max = $(data).length;
+		      	  current = (($(data).length/2) | 0);
 		       		$(data).each(function(d) {
 		       			if (start < 0) {
-		      	  			$("#coverflow").append('<figure cp="' + start + '" a="60" onclick="moveTo(this)" style="-webkit-transform: translateX(-' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+		      	  			$("#coverflow").append('<figure cp="' + start + '" a="60" onclick="moveTo(this)" style="-webkit-transform: translateX(' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
 			      	  	} else if (start == 0) {
-			      	  		$("#coverflow").append('<figure cp="' + start + '" a="0" onclick="moveTo(this)" style="-webkit-transform: translateX(-' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+			      	  		$("#coverflow").append('<figure cp="' + start + '" a="0" onclick="moveTo(this)" style="-webkit-transform: translateX(0px) rotateY(0deg)  translateZ(200px)"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
 			      	  	} else {
-			      	  		$("#coverflow").append('<figure cp="' + start + '" a="-60" onclick="moveTo(this)" style="-webkit-transform: translateX(-' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+			      	  		$("#coverflow").append('<figure cp="' + start + '" a="-60" onclick="moveTo(this)" style="-webkit-transform: translateX(' + start + 'px) rotateY(-60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
 			      	  	}
-		       			start = start + 50;
+		       			start = start + gap;
 		       		});
-		       		initialThrust();
 		       		$(".button").show();
 		      
 		       }, "json" );
 
 			}
     	})
-
-      function initialThrust() {
-      	  var start = -($("#coverflow figure").length * 50) / 2;
-      	  $("#coverflow figure").each(function(figure) {
-      	  	if (start < 0) {
-      	  		this.style.webkitTransform = "translateX(" + start + "px) rotateY(60deg)";
-      	  	} else if (start == 0) {
-      	  		this.style.webkitTransform = "translateX(0px) rotateY(0deg) translateZ(200px)";
-      	  	} else {
-      	  		this.style.webkitTransform = "translateX(" + start + "px) rotateY(-60deg)";
-      	  	}
-      	  	start = start + 50;
-      	  }); 
-         
-      }   
       
  });
 
@@ -195,15 +180,15 @@
               for (var i = 0; i <= max; i++) {
               	 var elem = $("#coverflow figure:nth-child(" + i +")");
 	             
-                currPos =  elem.attr("cp");
+                  currPos =  elem.attr("cp");
                   currAngle = elem.attr("a");
-                  if (currPos == "-50" || currPos == "0") {
+                  if (currPos == ("-" + gap) || currPos == "0") {
                       newPos = parseInt(currPos) + (gap * 2) * (1);
                       if (currPos == "0") {
                           newAngle = -60;
-                          newPos = 50;
+                          newPos = gap;
                       }
-                      else if (currPos = "-50") {
+                      else if (currPos == ("-" + gap)) {
                           newAngle = 0;
                           newPos = 0;
                       }
@@ -214,7 +199,7 @@
                       newPos = parseInt(currPos) + (gap) * (1);
                       newAngle = parseInt(currAngle);
                   }
-                  if (i == (current + 1)) {
+                  if ((i -1 )== (current )) {
                   	elem.css("webkitTransform", "translateX(" + newPos + "px) rotateY(" + newAngle + "deg) translateZ(200px)");
                   }
                   else {
@@ -232,13 +217,13 @@
 	              var elem = $("#coverflow figure:nth-child(" + i +")");
 	              currPos =  elem.attr("cp");
                   currAngle = elem.attr("a");
-                  if (currPos == "50" || currPos == "0") {
+                  if (currPos == ("" + gap) || currPos == "0") {
                       newPos = parseInt(currPos) + (gap * 2) * (-1);
                       if (currPos == "0") {
                           newAngle = 60;
-                          newPos = -50;
+                          newPos = -gap;
                       }
-                      else if (currPos = "50") {
+                      else if (currPos == ("" + gap) ) {
                           newAngle = 0;
                           newPos = 0;
                       }
