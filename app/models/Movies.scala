@@ -9,7 +9,7 @@ import scala.io.Source
 import play.api.libs.json.Writes._
 import scala.collection.mutable.Set
 
-case class Movie(id: Int, title: String, actors: String, genre: String)
+case class Movie(id: Int, title: String, actors: String, poster: String, genre: String)
 
 
 case class User(id: Int, name: String) 
@@ -41,7 +41,8 @@ object JsonReader {
     	(__ \ "_id").format[Int] ~
       	(__ \ "Title").format[String] ~
       	(__ \ "Actors").format[String] ~
-      	(__ \ "Genre").format[String] 
+      	(__ \ "Genre").format[String] ~
+      	(__ \ "Poster").format[String]
     )(Movie.apply, unlift(Movie.unapply))
 
 }

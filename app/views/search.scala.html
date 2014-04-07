@@ -1,0 +1,268 @@
+@(message: String)
+
+@main("Movie Buddy") {
+
+
+<style type="text/css"> 
+   *
+   {
+        margin:0;
+        padding:0;        
+   }
+    body
+    {                 
+        text-align:center;
+        background: -webkit-linear-gradient(top,#B1B9C4, #3A6299);
+        font-family:helvetica;
+        font-size:13px;
+        margin-top:10px;
+        height: 1000px;
+    }      
+    .container {
+      width: 210px;
+      height: 195px;
+      position: relative;
+      margin: 50px auto;
+      /*background-color:#000;
+      border: 1px solid #CCC;*/      
+      -webkit-perspective: 1100;         
+    }
+    
+    #coverflow {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      /*background-color:#000; */      
+      -webkit-transform: translateZ( -200px );            
+      -webkit-transform-style: preserve-3d;              
+      /*-webkit-backface-visibility: hidden;      */
+    }
+    
+    #coverflow figure {
+      display: block;
+      position: absolute;
+      width: 200px;
+      height: 170px;      
+      border: 2px solid black; 
+      cursor:pointer;           
+      -webkit-transition: -webkit-transform 0.5s ease; 
+      -webkit-box-reflect:below 0px -webkit-gradient(linear, left top, left bottom, from(transparent),color-stop(0.7, transparent), to(white));
+       -webkit-box-shadow:8px -7px 8px rgba(0, 0, 0, 0.9);
+    } 
+    #coverflow figure img
+    {
+        width:100%;
+        height:100%;
+    }          
+    
+    /*initial configuration*/
+    #coverflow figure:nth-child(1) {
+      -webkit-transform:translateX(100px) rotateY(-60deg);         
+    }
+    #coverflow figure:nth-child(2) {
+      -webkit-transform:translateX(150px) rotateY(-60deg);        
+    }
+    #coverflow figure:nth-child(3) {
+      -webkit-transform:translateX(200px) rotateY(-60deg);         
+    }
+    #coverflow figure:nth-child(4) {
+      -webkit-transform:translateX(250px) rotateY(-60deg);        
+    }
+    #coverflow figure:nth-child(5) {
+      -webkit-transform:translateX(300px) rotateY(-60deg);        
+    } 
+    #coverflow figure:nth-child(6) {
+      -webkit-transform:translateX(350px) rotateY(-60deg);        
+    } 
+    #coverflow figure:nth-child(7) {
+      -webkit-transform:translateX(400px) rotateY(-60deg);        
+    } 
+    
+    .pushBtn
+    {
+        width:100px; 
+        height:30px;  
+        cursor:pointer;   
+        background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#90CF23), to(#6A9C1D), color-stop(.4,#8BC20A));  
+        -webkit-border-radius:5px;
+        border:none;
+        font-family:helvetica;
+        color:#fff;
+        font-size:13px;
+        font-weight:bold;
+    }       
+   
+  </style>
+  <section class="container">
+  	<div style="width:200px; margin-left:auto; margin-right:auto; position: relative; left: -70px">
+		<input id="search" type="text" placeholder="Enter a movie title" style="color: #444;border-radius: 25px; font-size: 20pt; height: 30pt; text-align:center ">
+	</div>
+  </section>
+  <section class="container">
+
+
+        <div id="coverflow">
+        </div>
+   </section>
+   <div class="button" style="display:none">
+	<input class="pushBtn" type="button" value="Prev" onclick="left()" data="1">
+	<input class="pushBtn" type="button" value="Next" onclick="right()" data="-1">
+   </div>
+   <script type="text/javascript">
+     var min = 1;
+      var max = 10;
+      var current = 5;
+      var currPos = 0;
+      var newPos = 0;
+      var currAngle = 0;
+      var newAngle = 0;
+      var gap = 50;
+      var clickedIndex = 0;      
+      var diff = 0;
+   $(document).ready(function() {
+    
+    	$("#search").keyup(function(event) {
+			if ( event.which == 13 ) { 
+				// reset our contnet
+				$("#coverflow").empty();
+				$(".button").hide();
+				// get our text
+	    		var searchText = $("#search").val();
+		       $.get("http://localhost:9000/movies/search/title/" + encodeURI(searchText) + "/20", function(data) {
+		       		// Create the figure img
+		       		var start = -($(data).length * 50) / 2;
+		      	  	max = $(data).length;
+		      	  	current = $(data).length/2;
+		       		$(data).each(function(d) {
+		       			if (start < 0) {
+		      	  			$("#coverflow").append('<figure cp="' + start + '" a="60" onclick="moveTo(this)" style="-webkit-transform: translateX(-' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+			      	  	} else if (start == 0) {
+			      	  		$("#coverflow").append('<figure cp="' + start + '" a="0" onclick="moveTo(this)" style="-webkit-transform: translateX(-' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+			      	  	} else {
+			      	  		$("#coverflow").append('<figure cp="' + start + '" a="-60" onclick="moveTo(this)" style="-webkit-transform: translateX(-' + start + 'px) rotateY(60deg);"><img src="' + (this.Poster == 'N/A' ? '/assets/images/notfound.png':this.Poster) + '"></figure>');
+			      	  	}
+		       			start = start + 50;
+		       		});
+		       		initialThrust();
+		       		$(".button").show();
+		      
+		       }, "json" );
+
+			}
+    	})
+
+      function initialThrust() {
+      	  var start = -($("#coverflow figure").length * 50) / 2;
+      	  $("#coverflow figure").each(function(figure) {
+      	  	if (start < 0) {
+      	  		this.style.webkitTransform = "translateX(" + start + "px) rotateY(60deg)";
+      	  	} else if (start == 0) {
+      	  		this.style.webkitTransform = "translateX(0px) rotateY(0deg) translateZ(200px)";
+      	  	} else {
+      	  		this.style.webkitTransform = "translateX(" + start + "px) rotateY(-60deg)";
+      	  	}
+      	  	start = start + 50;
+      	  }); 
+         
+      }   
+      
+ });
+
+      function moveTo(targetObj) {                    
+      	  var clickedIndex = $(targetObj).index();
+          console.log(" aaaaaaaa " + clickedIndex);          
+              if (clickedIndex > current) {
+                  //move right to the clicked index
+                  diff = clickedIndex - current;
+                  for (var i = 1; i <= diff; i++) {
+                      right();
+                  }
+              }
+              else if (clickedIndex < current) {
+                  //move left to the clicked index
+                  diff = (current - clickedIndex);
+                  for (var i = 1; i <= diff; i++) {
+                      left();
+                  }
+              }
+              else {
+                  //same element is clicked....do nothing
+              }         
+      }
+      function left() {
+          //alert('test');
+          if (current >= min) {
+              current--;
+              for (var i = 0; i <= max; i++) {
+              	 var elem = $("#coverflow figure:nth-child(" + i +")");
+	             
+                currPos =  elem.attr("cp");
+                  currAngle = elem.attr("a");
+                  if (currPos == "-50" || currPos == "0") {
+                      newPos = parseInt(currPos) + (gap * 2) * (1);
+                      if (currPos == "0") {
+                          newAngle = -60;
+                          newPos = 50;
+                      }
+                      else if (currPos = "-50") {
+                          newAngle = 0;
+                          newPos = 0;
+                      }
+                      else {
+                      }
+                  }
+                  else {
+                      newPos = parseInt(currPos) + (gap) * (1);
+                      newAngle = parseInt(currAngle);
+                  }
+                  if (i == (current + 1)) {
+                  	elem.css("webkitTransform", "translateX(" + newPos + "px) rotateY(" + newAngle + "deg) translateZ(200px)");
+                  }
+                  else {
+                  	elem.css("webkitTransform",  "translateX(" + newPos + "px) rotateY(" + newAngle + "deg)");
+                  }
+                   elem.attr("cp", newPos);
+                  elem.attr("a", newAngle);
+              }
+          }
+      }
+      function right() {
+          if (current <= max) {
+              current++;
+              for (var i = 0; i <= max; i++) {
+	              var elem = $("#coverflow figure:nth-child(" + i +")");
+	              currPos =  elem.attr("cp");
+                  currAngle = elem.attr("a");
+                  if (currPos == "50" || currPos == "0") {
+                      newPos = parseInt(currPos) + (gap * 2) * (-1);
+                      if (currPos == "0") {
+                          newAngle = 60;
+                          newPos = -50;
+                      }
+                      else if (currPos = "50") {
+                          newAngle = 0;
+                          newPos = 0;
+                      }
+                      else {
+                      }
+                  }
+                  else {
+                      newPos = parseInt(currPos) + (gap) * (-1);
+                      newAngle = parseInt(currAngle);
+                  }
+                  if (i == (current + 1)) {
+                     	elem.css("webkitTransform", "translateX(" + newPos + "px) rotateY(" + newAngle + "deg) translateZ(200px)");
+                  }
+                  else {
+                      elem.css("webkitTransform", "translateX(" + newPos + "px) rotateY(" + newAngle + "deg)");
+                  }
+                  elem.attr("cp", newPos);
+                  elem.attr("a", newAngle);
+              }
+          }
+      }
+ 
+  </script>
+
+  
+}

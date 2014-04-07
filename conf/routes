@@ -4,6 +4,8 @@
 
 # Home page
 GET     /                           				controllers.Application.index
+GET     /search                        				controllers.Application.search
+
 GET		/users										controllers.Application.users
 GET		/users/:id 									controllers.Application.userById(id: Int)
 GET		/users/search/:name/:limit					controllers.Application.userByName(name: String, limit: Int)
