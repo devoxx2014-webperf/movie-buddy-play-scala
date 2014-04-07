@@ -7,6 +7,9 @@ import play.api.libs.json
 import play.api.libs.json._
 import models.JsonReader._
 import java.util.regex.Pattern
+import play.api.libs.iteratee._
+import play.api.Play.current
+import play.api.libs.concurrent.Execution.Implicits._
 
 object Application extends Controller {
 
@@ -16,16 +19,12 @@ object Application extends Controller {
   }
 
   def users = Action {
-  	//val file = new java.io.File("conf/users.json")
-	//val fileContent: Enumerator[Array[Byte]] = Enumerator.fromFile(file)
-	 // SimpleResult(
-	 //    header = ResponseHeader(200),
-	 //    body = fileContent
-	 // )
-  	 Ok.sendFile(
-  	 	content = new java.io.File("conf/users.json"),
-  	 	inline = true
-  	 ).as("application/json") 
+  	// Stream the content in chuncks
+  	val content: Enumerator[Array[Byte]] = Enumerator.fromStream(Play.resourceAsStream("users.json").get)
+	SimpleResult(
+	     header = ResponseHeader(200),
+	     body = content
+	 ).as("application/json")   	 
   }
 
   def userById(id: Int) = Action {
@@ -48,10 +47,11 @@ object Application extends Controller {
   }
 
   def movies = Action {
-  	 Ok.sendFile(
-  	 	content = new java.io.File("conf/movies.json"),
-  	 	inline = true
-  	 ).as("application/json") 
+  	val content: Enumerator[Array[Byte]] = Enumerator.fromStream(Play.resourceAsStream("movies.json").get)
+	SimpleResult(
+	     header = ResponseHeader(200),
+	     body = content
+	 ).as("application/json") 
   }
 
   def movieById(id: Int) = Action {
