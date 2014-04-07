@@ -128,7 +128,7 @@
 				$(".button").hide();
 				// get our text
 	    		var searchText = $("#search").val();
-		       $.get("http://localhost:9000/movies/search/title/" + encodeURI(searchText) + "/20", function(data) {
+		       $.get("/movies/search/title/" + encodeURI(searchText) + "/20", function(data) {
 		       		// Create the figure img
 		       		var start = -($(data).length * 50) / 2;
 		      	  	max = $(data).length;
