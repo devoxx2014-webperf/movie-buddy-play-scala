@@ -10,6 +10,8 @@ import play.api.libs.json.Writes._
 import scala.collection.mutable.Set
 
 case class Movie(id: Int, title: String, actors: String, poster: String, genre: String)
+//case class Movie(id: Int, title: String, actors: String, poster: String, genre: String, year: String, rated: String, released: String, 
+//	runtime: String, director: String, writer: String, plot: String, language: String, country: String, awards: String, metascore: String, imdbRating: String, imdbVotes: String, imdbID: String)
 
 
 case class User(id: Int, name: String) 
@@ -41,8 +43,24 @@ object JsonReader {
     	(__ \ "_id").format[Int] ~
       	(__ \ "Title").format[String] ~
       	(__ \ "Actors").format[String] ~
-      	(__ \ "Genre").format[String] ~
-      	(__ \ "Poster").format[String]
+      	(__ \ "Poster").format[String] ~
+      	(__ \ "Genre").format[String] /*~
+
+		(__ \ "Year").format[String] ~
+      	(__ \ "Rated").format[String] ~
+      	(__ \ "Released").format[String] ~
+      	(__ \ "Runtime").format[String] ~
+      	(__ \ "Director").format[String] ~
+      	(__ \ "Writer").format[String] ~
+      	(__ \ "Plot").format[String] ~
+      	(__ \ "Language").format[String] ~
+      	(__ \ "Country").format[String] ~
+      	(__ \ "Awards").format[String] ~
+      	(__ \ "Metascore").format[String] ~
+      	(__ \ "imdbRating").format[String] ~
+      	(__ \ "imdbVotes").format[String] ~
+      	(__ \ "imdbID").format[String]     */
+      
     )(Movie.apply, unlift(Movie.unapply))
 
 }

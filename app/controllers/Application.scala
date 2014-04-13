@@ -12,18 +12,15 @@ import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws._
 import java.io._
+import java.util.regex._
 
 object Application extends Controller {
 
-
-  def getImage(url:String) =  Action {
-	  Async {
+  def getImage(url:String) =  Action.async {
 	    WS.url(url).withHeaders("referer" -> "localhost").get().map(response => {
 		    val asStream: InputStream = response.ahcResponse.getResponseBodyAsStream
-		    Ok.stream(Enumerator.fromStream(asStream))
+		    Status(OK).chunked(Enumerator.fromStream(asStream))
 		  })
-
-	  }  
 	}
 
   def index = Action {
@@ -54,11 +51,12 @@ object Application extends Controller {
   }
 
   def userByName(name: String, limit: Int) = Action {
-  	val users:Seq[User] = name match {
+  	val pattern = Pattern.compile(name.toLowerCase);
+    val users:Seq[User] = name match {
   		case "*" => Repository.users
                 .take(limit)
         case _ => Repository.users
-                .filter(user => user.name.toLowerCase.contains(name))
+                .filter(user =>  pattern.matcher(user.name.toLowerCase).find())
                 .take(limit)
   	}
     Ok(Json.toJson(users))           
@@ -73,41 +71,44 @@ object Application extends Controller {
   }
 
   def movieById(id: Int) = Action {
-  	 val movie:Option[Movie] = Repository.movies.find(u => u.id == id)
-  	 movie match {
+  	val movie:Option[Movie] = Repository.movies.find(u => u.id == id)
+  	movie match {
   	 	case Some(movie) => Ok(Json.toJson(movie))
   	 	case None => NotFound("movie " + id + " not found")
   	 }
    }
 
   def movieByTitle(title: String, limit: Int) = Action {
-  	val movies:Seq[Movie] = title match {
+  	val pattern = Pattern.compile(title.toLowerCase);
+    val movies:Seq[Movie] = title match {
   		case "*" => Repository.movies
                 .take(limit)
         case _ => Repository.movies
-                .filter(movie => movie.title.toLowerCase.contains(title.toLowerCase))
+                .filter(movie => pattern.matcher(movie.title.toLowerCase).find())
                 .take(limit)
   	}
     Ok(Json.toJson(movies))           
   }
 
   def movieByActor(actors: String, limit: Int) = Action {
-  	val movies:Seq[Movie] = actors match {
+  	val pattern = Pattern.compile(actors.toLowerCase);
+    val movies:Seq[Movie] = actors match {
   		case "*" => Repository.movies
                 .take(limit)
         case _ => Repository.movies
-                .filter(movie => movie.actors.toLowerCase.contains(actors.toLowerCase))
+                .filter(movie => pattern.matcher(movie.actors.toLowerCase).find())
                 .take(limit)
   	}
     Ok(Json.toJson(movies))       
   }
 
   def movieByGenre(genre: String, limit: Int) = Action {
-  	val movies:Seq[Movie] = genre match {
+  	val pattern = Pattern.compile(genre.toLowerCase);
+    val movies:Seq[Movie] = genre match {
   		case "*" => Repository.movies
                 .take(limit)
         case _ => Repository.movies
-                .filter(movie => movie.genre.toLowerCase.contains(genre.toLowerCase))
+                .filter(movie => pattern.matcher(movie.genre.toLowerCase).find())
                 .take(limit)
   	}
     Ok(Json.toJson(movies))       
@@ -124,7 +125,10 @@ object Application extends Controller {
     	val rate = rateStr.toInt
 
     	Repository.rates += Rate(user.get, movie.get, rate)
-    	Created("user " + user.get.name + " rated " + movie.get.title + " " + rate)    
+    	//Created("user " + user.get.name + " rated " + movie.get.title + " " + rate)    
+
+		// Redirect to user ud
+		Redirect(routes.Application.userById(userId.toInt))    	
     }.getOrElse {
       	BadRequest("Expecting Json data")
     }
