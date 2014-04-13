@@ -19,7 +19,7 @@ object Application extends Controller {
   def getImage(url:String) =  Action.async {
 	    WS.url(url).withHeaders("referer" -> "localhost").get().map(response => {
 		    val asStream: InputStream = response.ahcResponse.getResponseBodyAsStream
-		    Status(OK).chunked(Enumerator.fromStream(asStream))
+		    Ok.chunked(Enumerator.fromStream(asStream))
 		  })
 	}
 
@@ -32,14 +32,15 @@ object Application extends Controller {
 
   	Ok(views.html.search("Movie buddy"))
   }
-
+	
   def users = Action {
   	// Stream the content in chuncks
-  	val content: Enumerator[Array[Byte]] = Enumerator.fromStream(Play.resourceAsStream("users.json").get)
-	SimpleResult(
-	     header = ResponseHeader(200),
-	     body = content
-	 ).as("application/json")   	 
+  	// 	SimpleResult(
+	 //     header = ResponseHeader(200),
+	 //     body = Enumerator.fromStream(Play.resourceAsStream("users.json").get)
+	 // ).as("application/json")   	 
+  	Ok.chunked(Enumerator.fromStream(Play.resourceAsStream("users.json").get)).as("application/json") 
+ 
   }
 
   def userById(id: Int) = Action {
@@ -62,12 +63,8 @@ object Application extends Controller {
     Ok(Json.toJson(users))           
   }
 
-  def movies = Action {
-  	val content: Enumerator[Array[Byte]] = Enumerator.fromStream(Play.resourceAsStream("movies.json").get)
-	SimpleResult(
-	     header = ResponseHeader(200),
-	     body = content
-	 ).as("application/json") 
+ def movies = Action {
+  	Ok.chunked(Enumerator.fromStream(Play.resourceAsStream("movies.json").get)).as("application/json") 
   }
 
   def movieById(id: Int) = Action {
@@ -164,6 +161,5 @@ object Application extends Controller {
   		
   }
 
- 
 
 }
