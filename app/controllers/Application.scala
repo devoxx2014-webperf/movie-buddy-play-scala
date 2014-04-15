@@ -113,9 +113,9 @@ object Application extends Controller {
 
   def rates = Action { request =>
   	request.body.asJson.map { json => 
-	   	val userId = (json \ "userId").as[String]
-	  	val movieId = (json \ "movieId").as[String]
-   		val rateStr = (json \ "rate").as[String]
+	   	val userId = (json \ "userId").as[Int]
+	  	val movieId = (json \ "movieId").as[Int]
+   		val rateStr = (json \ "rate").as[Int]
 
     	val user = Repository.users.find(u => u.id == userId.toInt)
     	val movie = Repository.movies.find(u => u.id == movieId.toInt)
