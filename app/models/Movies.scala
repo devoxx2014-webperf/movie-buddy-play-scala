@@ -16,6 +16,7 @@ case class Movie(id: Int, title: String, actors: String, poster: String, genre: 
 
 case class User(id: Int, name: String) 
 
+
 case class Rate(user: User, movie: Movie, rate: Int) {
 	override def equals(obj: Any): Boolean = {
 		obj match {
