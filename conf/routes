@@ -22,7 +22,7 @@ POST	/rates										controllers.Application.rates
 GET		/rates/:userId 								controllers.Application.ratesByUser(userId: Int)
 
 GET		/users/share/:userid1/:userid2 				controllers.Application.shareRates(userid1: Int, userid2: Int)
-GET		/users/distance/:userid1/:userid2			controllers.Application.distance(userid1: Int, userid2: Int)
+GET		/rates/distance/:userid1/:userid2			controllers.Application.distance(userid1: Int, userid2: Int)
 
 
 # Map static resources from the /public folder to the /assets URL path
