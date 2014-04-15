@@ -124,8 +124,10 @@ object Application extends Controller {
     	Repository.rates += Rate(user.get, movie.get, rate)
     	//Created("user " + user.get.name + " rated " + movie.get.title + " " + rate)    
 
-		// Redirect to user ud
-		Redirect(routes.Application.userById(userId.toInt))    	
+		  // Redirect to user ud
+		  //Redirect(routes.Application.userById(userId.toInt))    	
+
+      MovedPermanently(routes.Application.userById(userId.toInt).url)
     }.getOrElse {
       	BadRequest("Expecting Json data")
     }
@@ -133,7 +135,7 @@ object Application extends Controller {
 
   def ratesByUser(userId: Int) = Action { 
   	val rates = Repository.rates.filter(r => r.user.id == userId).map(_.rate)
-	Ok(Json.toJson(rates))
+	   Ok(Json.toJson(rates))
   }
  
   def shareRates(userOneId: Int, userTwoId: Int) = Action {
